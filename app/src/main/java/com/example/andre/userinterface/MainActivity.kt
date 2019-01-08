@@ -14,7 +14,7 @@ import com.example.andre.userinterface.dummy.DummyContent
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, SdPicturesFragment.OnListFragmentInteractionListener {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, SdPicturesFragment.OnListFragmentInteractionListener, GalleryFragment.OnListFragmentInteractionListener {
 
     override fun onListFragmentInteraction(item: DummyContent.DummyItem?) {
         //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -71,11 +71,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         when (item.itemId) {
             R.id.nav_camera -> {
                 // Handle the camera action
-            }
-            R.id.nav_gallery -> {
                 fragment = SdPicturesFragment()
                 val ft : FragmentTransaction = supportFragmentManager.beginTransaction()
-                ft.replace(R.id.drawer_layout, fragment)
+                ft.replace(R.id.content_main, fragment)
+                ft.commit()
+            }
+            R.id.nav_gallery -> {
+                //Handle the gallery action
+                fragment = GalleryFragment()
+                val ft : FragmentTransaction = supportFragmentManager.beginTransaction()
+                ft.replace(R.id.content_main, fragment)
                 ft.commit()
             }
             R.id.nav_slideshow -> {
