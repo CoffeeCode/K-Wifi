@@ -9,9 +9,11 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 
 import com.example.andre.userinterface.dummy.DummyContent
 import com.example.andre.userinterface.dummy.DummyContent.DummyItem
+import info.ap.pentax.PentaxCommunicator
 
 /**
  * A fragment representing a list of Items.
@@ -25,12 +27,22 @@ class SdPicturesFragment : Fragment() {
 
     private var listener: OnListFragmentInteractionListener? = null
 
+    private var imageListForAdapter = arrayListOf<String>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         arguments?.let {
             columnCount = it.getInt(ARG_COLUMN_COUNT)
+            imageListForAdapter = it.getStringArrayList("imageList")
         }
+
+        val text = "ImageList size ${imageListForAdapter.size}"
+        val duration = Toast.LENGTH_SHORT
+
+        val toast = Toast.makeText(context, text, duration)
+        toast.show()
+
     }
 
     override fun onCreateView(
@@ -39,16 +51,19 @@ class SdPicturesFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_sdpictures_list, container, false)
 
-        // Set the adapter
+        /**
+         * II. Set the adapter
+         */
         if (view is RecyclerView) {
             with(view) {
                 layoutManager = when {
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                adapter = MySdPicturesRecyclerViewAdapter(DummyContent.ITEMS, listener)
+                adapter = MySdPicturesRecyclerViewAdapter(imageListForAdapter, listener)
             }
         }
+
         return view
     }
 

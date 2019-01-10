@@ -11,8 +11,12 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import com.example.andre.userinterface.dummy.DummyContent
+import info.ap.pentax.Dir
+import info.ap.pentax.PentaxCommunicator
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, SdPicturesFragment.OnListFragmentInteractionListener, GalleryFragment.OnListFragmentInteractionListener {
 
@@ -70,13 +74,48 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Handle navigation view item clicks here.
         when (item.itemId) {
             R.id.nav_camera -> {
-                // Handle the camera action
-                fragment = SdPicturesFragment()
-                val ft : FragmentTransaction = supportFragmentManager.beginTransaction()
-                ft.replace(R.id.content_main, fragment)
-                ft.commit()
+
+                /**
+                 *  @todo 1. Check that Device is connected via WIFI, if not print error message
+                 */
+
+                /**
+                 *  2. Get the Data from the PentaxCommunicator
+                 */
+                val pkCommunicator = PentaxCommunicator()
+                var imageList : ArrayList<Dir>
+
+                doAsync {
+
+                    Snackbar.make(findViewById(R.id.content_main), "Reading image list. This could take a while.", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show()
+
+                    imageList = ArrayList(pkCommunicator.getImageList())
+
+                    var imageListForAdapter: ArrayList<String>
+                    imageListForAdapter = arrayListOf<String>()
+
+                    for(i in imageList.indices) {
+                        imageListForAdapter.add(imageList[i].name)
+                    }
+
+                    uiThread {
+                        /**
+                         * 3. Start the new fragment and transmit the imageList in a bundle
+                         */
+                        var bundle = Bundle()
+                        bundle.putStringArrayList("imageList", imageListForAdapter)
+                        fragment = SdPicturesFragment()
+                        fragment.arguments = bundle
+                        val ft : FragmentTransaction = supportFragmentManager.beginTransaction()
+                        ft.replace(R.id.content_main, fragment)
+                        ft.commit()
+                    }
+                }
+
             }
             R.id.nav_gallery -> {
+
                 //Handle the gallery action
                 fragment = GalleryFragment()
                 val ft : FragmentTransaction = supportFragmentManager.beginTransaction()
@@ -89,7 +128,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_manage -> {
 
             }
-            R.id.nav_share -> {
+            R.id.nav_connect -> {
+                val pkConnector = PentaxConnector(this)
+                pkConnector.connectToWPAWiFi("PENTAX_67A107", "A467A107")
 
             }
             R.id.nav_send -> {
