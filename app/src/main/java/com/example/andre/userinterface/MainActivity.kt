@@ -1,6 +1,7 @@
 package com.example.andre.userinterface
 
 import android.os.Bundle
+import android.os.Handler
 import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
@@ -10,17 +11,20 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import com.example.andre.userinterface.dummy.DummyContent
 import info.ap.pentax.Dir
 import info.ap.pentax.PentaxCommunicator
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
+import android.util.Log
+import android.widget.TextView
+import android.widget.Toast
+
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, SdPicturesFragment.OnListFragmentInteractionListener, GalleryFragment.OnListFragmentInteractionListener {
 
-    override fun onListFragmentInteraction(item: DummyContent.DummyItem?) {
+    override fun onListFragmentInteraction(item: String?) {
         //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
@@ -39,6 +43,28 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         )
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
+
+        val checkConnectionHandler = Handler()
+        val handlerDelay : Long =  5000
+
+        checkConnectionHandler.postDelayed(object : Runnable {
+            override fun run() {
+                val textView = findViewById(R.id.headerTextLevel1) as TextView
+                Log.d("petnax communicator", "checking connection to camera")
+
+                //do something
+                val isConnected = checkConnectionHandler.postDelayed(this, handlerDelay)
+                val pkConnector = PentaxConnector(this@MainActivity)
+
+                /*if(pkConnector.isConnectionAlive()) {
+                    textView.setText("Connected to Pentax K1")
+                    Log.d("petnax communicator", "Connected")
+                }
+                else {
+                    Log.d("petnax communicator", "NOT Connected")
+                }*/
+            }
+        }, handlerDelay)
 
         nav_view.setNavigationItemSelectedListener(this)
     }
@@ -134,6 +160,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             }
             R.id.nav_send -> {
+                doAsync {
+                    val pkCommunicator = PentaxCommunicator()
+                    val text = pkCommunicator.checkConnection()
+
+                    uiThread {
+                        Toast.makeText(applicationContext, "Verbindung: " + text, Toast.LENGTH_LONG).show()
+                    }
+                }
 
             }
         }

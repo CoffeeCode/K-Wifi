@@ -6,14 +6,11 @@ import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-
-import com.example.andre.userinterface.dummy.DummyContent
-import com.example.andre.userinterface.dummy.DummyContent.DummyItem
-import info.ap.pentax.PentaxCommunicator
 
 /**
  * A fragment representing a list of Items.
@@ -21,6 +18,8 @@ import info.ap.pentax.PentaxCommunicator
  * [SdPicturesFragment.OnListFragmentInteractionListener] interface.
  */
 class SdPicturesFragment : Fragment() {
+
+    val TAG = "SdPicturesFragment"
 
     // TODO: Customize parameters
     private var columnCount = 1
@@ -38,10 +37,9 @@ class SdPicturesFragment : Fragment() {
         }
 
         val text = "ImageList size ${imageListForAdapter.size}"
-        val duration = Toast.LENGTH_SHORT
-
-        val toast = Toast.makeText(context, text, duration)
+        val toast = Toast.makeText(context, text, Toast.LENGTH_SHORT)
         toast.show()
+
 
     }
 
@@ -64,6 +62,9 @@ class SdPicturesFragment : Fragment() {
             }
         }
 
+        val toast = Toast.makeText(context, view.javaClass.name, Toast.LENGTH_SHORT)
+        toast.show()
+
         return view
     }
 
@@ -71,6 +72,7 @@ class SdPicturesFragment : Fragment() {
         super.onAttach(context)
         if (context is OnListFragmentInteractionListener) {
             listener = context
+            Log.d(TAG, "onAttach InteractionListener")
         } else {
             throw RuntimeException(context.toString() + " must implement OnListFragmentInteractionListener")
         }
@@ -94,7 +96,8 @@ class SdPicturesFragment : Fragment() {
      */
     interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        fun onListFragmentInteraction(item: DummyItem?)
+        fun onListFragmentInteraction
+                    (item: String?)
     }
 
     companion object {

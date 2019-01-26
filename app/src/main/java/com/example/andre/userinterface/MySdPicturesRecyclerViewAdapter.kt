@@ -1,21 +1,22 @@
 package com.example.andre.userinterface
 
+import android.content.Context
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import com.example.andre.userinterface.R.drawable.abc_ab_share_pack_mtrl_alpha
-
+import android.widget.Toast
 
 import com.example.andre.userinterface.SdPicturesFragment.OnListFragmentInteractionListener
-import com.example.andre.userinterface.dummy.DummyContent.DummyItem
 
 import kotlinx.android.synthetic.main.fragment_sdpictures.view.*
 
+
 /**
- * [RecyclerView.Adapter] that can display a [DummyItem] and makes a call to the
+ * [RecyclerView.Adapter] that can display a [String] and makes a call to the
  * specified [OnListFragmentInteractionListener].
  * TODO: Replace the implementation with code for your data type.
  */
@@ -26,12 +27,23 @@ class MySdPicturesRecyclerViewAdapter(
 
     private val mOnClickListener: View.OnClickListener
 
+    private val TAG = MySdPicturesRecyclerViewAdapter::class.simpleName
+
     init {
         mOnClickListener = View.OnClickListener { v ->
-            val item = v.tag as DummyItem
+
+            val item = v.tag as String //todo change to View Datatype to access all properties
+
             // Notify the active callbacks interface (the activity, if the fragment is attached to
             // one) that an item has been selected.
-            mListener?.onListFragmentInteraction(item)
+
+            //todo open image viewer on the saved file
+            Log.d(TAG, "OnClickListener was run")
+
+            val toast = Toast.makeText(v.context, "OnClick event", Toast.LENGTH_SHORT)
+            toast.show()
+
+            mListener?.onListFragmentInteraction("some String : $item")
         }
     }
 
@@ -67,3 +79,4 @@ class MySdPicturesRecyclerViewAdapter(
         }
     }
 }
+    
